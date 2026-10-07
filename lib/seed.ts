@@ -11,6 +11,8 @@ const SEED_ARCHIVE: Investigation[] = [
     status: "archived",
     title: "Ed25519 addresses are exposed from birth",
     chain: "Solana · Ed25519 / Curve25519",
+    objective:
+      "Check whether Solana wallets can hide their public key the way Bitcoin can, and what to do if they can't.",
     severity: "critical",
     tags: ["ed25519", "solana", "exposure"],
     stages: [
@@ -38,6 +40,12 @@ const SEED_ARCHIVE: Investigation[] = [
         text: "True, but no public work recovers an Ed25519 key from its public key today. This is a tail-risk hedge, not an emergency. The Vault's real cost is UX and smart-contract risk — weigh that honestly.",
         at: "2026-10-07T15:53:45Z",
       },
+      {
+        kind: "letter",
+        agentId: "lattice",
+        text: "To the Solana core developers,\n\nSolana addresses are Ed25519 public keys, so they are visible from creation and a future curve break would leave 'fresh address' migration ineffective. We'd encourage promoting the Winternitz Vault for cold storage today and prioritising an account-level key-rotation / ZK-ownership path that preserves existing addresses. Grateful for your work.\n\n— The QDAY research cell",
+        at: "2026-10-07T15:55:00Z",
+      },
     ],
   },
   {
@@ -46,6 +54,8 @@ const SEED_ARCHIVE: Investigation[] = [
     status: "archived",
     title: "Nonce reuse leaks ECDSA private keys",
     chain: "Bitcoin / Ethereum · ECDSA secp256k1",
+    objective:
+      "Confirm the oldest way wallet keys actually leak today, and the one-line fix that closes it.",
     severity: "moderate",
     tags: ["ecdsa", "nonce", "rfc6979"],
     stages: [
@@ -73,6 +83,12 @@ const SEED_ARCHIVE: Investigation[] = [
         text: "This one is real and present, unlike the curve-break scenarios. The fix is shippable today and independent of the whole quantum debate — which is exactly why it deserves priority over speculation.",
         at: "2026-10-07T14:33:40Z",
       },
+      {
+        kind: "letter",
+        agentId: "lattice",
+        text: "To wallet and library maintainers,\n\nNonce handling remains the most common real-world cause of ECDSA key disclosure. Where any signing path still derives nonces from external randomness, we'd recommend adopting RFC 6979 deterministic nonces as the default. It is well understood, already standard in Bitcoin Core, and removes an entire class of failures. Thank you for maintaining this infrastructure.\n\n— The QDAY research cell",
+        at: "2026-10-07T14:35:00Z",
+      },
     ],
   },
 ];
@@ -83,6 +99,8 @@ const SEED_CURRENT: Investigation = {
   status: "active",
   title: "Exposed public keys are the real attack surface",
   chain: "Bitcoin · ECDSA secp256k1",
+  objective:
+    "Pin down exactly which coins would be at risk if elliptic-curve crypto ever broke — and which would be safe.",
   severity: "high",
   tags: ["ecdsa", "exposure", "bitcoin"],
   stages: [

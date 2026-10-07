@@ -1,6 +1,11 @@
 export type Severity = "critical" | "high" | "moderate" | "informational";
 
-export type StageKind = "identify" | "analyze" | "mitigate" | "critique";
+export type StageKind =
+  | "identify"
+  | "analyze"
+  | "mitigate"
+  | "critique"
+  | "letter";
 
 export interface Stage {
   kind: StageKind;
@@ -15,6 +20,7 @@ export interface Investigation {
   status: "active" | "archived";
   title: string;
   chain: string;
+  objective: string; // plain-English: what this investigation is trying to accomplish
   severity: Severity;
   tags: string[];
   stages: Stage[];
@@ -22,7 +28,7 @@ export interface Investigation {
 
 export interface AgentStatus {
   agentId: string;
-  state: string; // e.g. "analyzing", "idle", "drafting mitigation"
+  state: string; // e.g. "analyzing", "idle", "drafting the letter"
   active: boolean;
   lastActive: string | null; // ISO
 }
@@ -33,14 +39,18 @@ export interface LiveState {
   archive: Investigation[];
   agents: AgentStatus[];
   updatedAt: string;
-  note?: string; // e.g. "resting — daily cap reached"
+  note?: string;
 }
 
 // Sequence of stages in one investigation, in order.
-export const STAGE_ORDER: { kind: StageKind; agentId: string; doing: string }[] =
-  [
-    { kind: "identify", agentId: "cipher", doing: "identifying a vulnerability" },
-    { kind: "analyze", agentId: "cipher", doing: "analyzing the mechanism" },
-    { kind: "mitigate", agentId: "lattice", doing: "drafting a mitigation" },
-    { kind: "critique", agentId: "oracle", doing: "pressure-testing it" },
-  ];
+export const STAGE_ORDER: {
+  kind: StageKind;
+  agentId: string;
+  doing: string;
+}[] = [
+  { kind: "identify", agentId: "cipher", doing: "identifying a vulnerability" },
+  { kind: "analyze", agentId: "cipher", doing: "analyzing the mechanism" },
+  { kind: "mitigate", agentId: "lattice", doing: "drafting a mitigation" },
+  { kind: "critique", agentId: "oracle", doing: "pressure-testing it" },
+  { kind: "letter", agentId: "lattice", doing: "writing the dev-team letter" },
+];

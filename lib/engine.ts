@@ -8,6 +8,7 @@ import {
   getSpend,
   addSpend,
   todayUTC,
+  apiKey,
 } from "./store";
 
 const MODEL = "claude-haiku-4-5-20251001";
@@ -32,8 +33,8 @@ interface AnthropicUsage {
 async function callClaude(
   userPrompt: string
 ): Promise<{ text: string; usage: AnthropicUsage }> {
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) throw new Error("ANTHROPIC_API_KEY missing");
+  const key = apiKey();
+  if (!key) throw new Error("API key missing");
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -71,6 +72,7 @@ function costOf(u: AnthropicUsage): number {
 function parseIdentify(raw: string): {
   title: string;
   chain: string;
+  objective: string;
   severity: Severity;
   body: string;
 } {
@@ -97,6 +99,7 @@ function parseIdentify(raw: string): {
   return {
     title: grab("TITLE") || "Cryptographic exposure under review",
     chain: grab("CHAIN") || "multiple chains",
+    objective: grab("OBJECTIVE") || "",
     severity,
     body: body || raw,
   };
@@ -161,7 +164,8 @@ Respond EXACTLY in this format:
 TITLE: <under 9 words>
 CHAIN: <affected chains / signature scheme>
 SEVERITY: <critical|high|moderate>
-BODY: <why it matters, under 60 words>`;
+OBJECTIVE: <one plain-English sentence a non-expert understands: what this investigation is trying to accomplish>
+BODY: <why it matters, under 55 words>`;
     const { text, usage } = await callClaude(prompt);
     const parsed = parseIdentify(text);
     current = {
@@ -170,6 +174,9 @@ BODY: <why it matters, under 60 words>`;
       status: "active",
       title: parsed.title,
       chain: parsed.chain,
+      objective:
+        parsed.objective ||
+        `Work out whether ${topic} is a real risk and what defends against it.`,
       severity: parsed.severity,
       tags: tagsFrom(text + " " + topic),
       stages: [
@@ -196,9 +203,10 @@ BODY: <why it matters, under 60 words>`;
 
   const prompts: Record<StageKind, string> = {
     identify: "",
-    analyze: `Investigation so far:\n${prior}\n\nAs CIPHER-0, explain HOW this exposure works — the mechanism, conceptually, in plain technical terms. No exploit code. Under 70 words.`,
+    analyze: `Investigation so far:\n${prior}\n\nAs CIPHER-0, think out loud and explain HOW this exposure works — the mechanism, conceptually, in plain technical terms. No exploit code. Under 70 words.`,
     mitigate: `Investigation so far:\n${prior}\n\nAs LATTICE-7 (post-quantum defense architect), propose the standard, published defense(s). Name concrete schemes (hash-based signatures, WOTS, SPHINCS+, ZK proofs, RFC 6979, key rotation, etc.) and the trade-off. Under 70 words.`,
     critique: `Investigation so far:\n${prior}\n\nAs ORACLE-9 (threat-model skeptic), pressure-test it: how realistic is this threat today, does the proposed defense actually hold, and what's the catch? Under 70 words.`,
+    letter: `Investigation so far:\n${prior}\n\nAs LATTICE-7, write a short, respectful open letter to the development team behind the affected chain or infrastructure, summarizing this well-known exposure and recommending the standard published mitigation. Begin with a greeting line like "To the <team> developers," and sign off as "— The QDAY research cell". Constructive and factual, no alarmism, no exploit details. Under 110 words.`,
   };
 
   const { text, usage } = await callClaude(prompts[nextStage.kind]);

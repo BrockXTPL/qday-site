@@ -6,10 +6,11 @@ import type { LiveState, Investigation, StageKind } from "@/lib/types";
 import { STAGE_ORDER } from "@/lib/types";
 
 const STAGE_LABEL: Record<StageKind, string> = {
-  identify: "Vulnerability",
+  identify: "The vulnerability",
   analyze: "How it works",
-  mitigate: "Proposed defense",
+  mitigate: "The fix",
   critique: "Reality check",
+  letter: "Letter to the dev team",
 };
 
 function timeAgo(iso: string | null): string {
@@ -158,12 +159,20 @@ function ActiveInvestigation({
       <h3 className="lc-title">{inv.title}</h3>
       <div className="lc-chain mono">{inv.chain}</div>
 
+      {inv.objective && (
+        <div className="lc-objective">
+          <span className="lbl mono">OBJECTIVE</span>
+          <p>{inv.objective}</p>
+        </div>
+      )}
+
       <div className="lc-stages">
         {STAGE_ORDER.map((so) => {
           const stage = inv.stages.find((s) => s.kind === so.kind);
           const isDone = doneKinds.includes(so.kind);
           const isNext = nextStage?.kind === so.kind;
           const agent = agentById(so.agentId)!;
+          const isLetter = so.kind === "letter";
           return (
             <div
               key={so.kind}
@@ -182,7 +191,11 @@ function ActiveInvestigation({
                   <span>{STAGE_LABEL[so.kind]}</span>
                 </div>
                 {isDone ? (
-                  <p>{stage!.text}</p>
+                  isLetter ? (
+                    <pre className="lc-letter">{stage!.text}</pre>
+                  ) : (
+                    <p>{stage!.text}</p>
+                  )
                 ) : isNext ? (
                   <p className="working">
                     {agent.handle} is {pendingAgent?.state || so.doing}
@@ -214,6 +227,12 @@ function ArchiveRow({ inv }: { inv: Investigation }) {
       </button>
       {open && (
         <div className="lc-arow-body">
+          {inv.objective && (
+            <div className="lc-objective sm">
+              <span className="lbl mono">OBJECTIVE</span>
+              <p>{inv.objective}</p>
+            </div>
+          )}
           {inv.stages.map((s, i) => {
             const agent = agentById(s.agentId)!;
             return (
@@ -227,7 +246,11 @@ function ArchiveRow({ inv }: { inv: Investigation }) {
                   <span className="sep">·</span>
                   <span>{STAGE_LABEL[s.kind]}</span>
                 </div>
-                <p>{s.text}</p>
+                {s.kind === "letter" ? (
+                  <pre className="lc-letter">{s.text}</pre>
+                ) : (
+                  <p>{s.text}</p>
+                )}
               </div>
             );
           })}

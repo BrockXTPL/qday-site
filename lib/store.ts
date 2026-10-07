@@ -1,21 +1,31 @@
-import { Redis } from "@upstash/redis";
+import Redis from "ioredis";
 
-// Reads whichever env var pair the storage integration provided:
-// Vercel KV uses KV_REST_API_URL / KV_REST_API_TOKEN;
-// a raw Upstash integration uses UPSTASH_REDIS_REST_URL / _TOKEN.
+// The Upstash/Vercel integration provides REDIS_URL (a rediss:// TCP string).
+// The API key was saved under the name SECRET (fallback: ANTHROPIC_API_KEY).
+const g = globalThis as unknown as { __qdayRedis?: Redis };
+
 function getRedis(): Redis | null {
-  const url =
-    process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token =
-    process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+  const url = process.env.REDIS_URL;
+  if (!url) return null;
+  if (!g.__qdayRedis) {
+    g.__qdayRedis = new Redis(url, {
+      maxRetriesPerRequest: 3,
+      enableReadyCheck: false,
+      lazyConnect: false,
+    });
+    // Avoid unhandled 'error' events crashing the function.
+    g.__qdayRedis.on("error", () => {});
+  }
+  return g.__qdayRedis;
 }
 
 export const redis = getRedis();
 export const storageReady = redis !== null;
-export const engineConfigured =
-  storageReady && !!process.env.ANTHROPIC_API_KEY;
+
+export function apiKey(): string | undefined {
+  return process.env.ANTHROPIC_API_KEY || process.env.SECRET;
+}
+export const engineConfigured = storageReady && !!apiKey();
 
 const K = {
   current: "qday:current",
@@ -25,23 +35,28 @@ const K = {
   topicIndex: "qday:topicIndex",
   lock: "qday:lock",
 };
+export const KEYS = K;
 
-// @upstash/redis auto-serializes JSON on set and parses on get.
+// ioredis stores strings; we JSON-encode ourselves.
 export async function kvGet<T>(key: string): Promise<T | null> {
   if (!redis) return null;
-  return (await redis.get<T>(key)) ?? null;
+  const v = await redis.get(key);
+  if (v == null) return null;
+  try {
+    return JSON.parse(v) as T;
+  } catch {
+    return null;
+  }
 }
 export async function kvSet(key: string, val: unknown): Promise<void> {
   if (!redis) return;
-  await redis.set(key, val);
+  await redis.set(key, JSON.stringify(val));
 }
 
-export const KEYS = K;
-
-// Atomic lock: SET key val NX PX=ms. Returns true if acquired.
+// Atomic lock: SET key val PX ms NX. Returns true if acquired.
 export async function acquireLock(ms: number): Promise<boolean> {
   if (!redis) return false;
-  const res = await redis.set(K.lock, Date.now(), { nx: true, px: ms });
+  const res = await redis.set(K.lock, String(Date.now()), "PX", ms, "NX");
   return res === "OK";
 }
 export async function releaseLock(): Promise<void> {
