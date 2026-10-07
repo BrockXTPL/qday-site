@@ -635,6 +635,145 @@ footer {
   margin-top: 2px;
 }
 
+/* ---- brand proto + page head ---- */
+.brand-proto {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--faint);
+  letter-spacing: 0.04em;
+  padding-left: 10px;
+  margin-left: 2px;
+  border-left: 1px solid var(--line-bright);
+}
+.pagehead {
+  padding: 30px 0 22px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  z-index: 2;
+}
+.proto-label {
+  font-size: 12px;
+  color: var(--signal);
+  letter-spacing: 0.2em;
+}
+.pagehead-sub {
+  color: var(--muted);
+  font-size: clamp(15px, 2vw, 17px);
+  margin-top: 10px;
+  max-width: 68ch;
+  line-height: 1.5;
+}
+@media (max-width: 680px) {
+  .brand-proto {
+    display: none;
+  }
+}
+
+/* ---- welcome modal ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(5, 8, 12, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadein 0.25s ease;
+}
+.modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  background: var(--panel);
+  border: 1px solid var(--line-bright);
+  border-radius: 8px;
+  padding: 40px 36px 32px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 90, 54, 0.08);
+  animation: popin 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.modal-x {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--faint);
+  font-size: 15px;
+  cursor: pointer;
+  padding: 6px;
+  line-height: 1;
+}
+.modal-x:hover {
+  color: var(--bone);
+}
+.modal-proto {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--signal);
+}
+.modal-wordmark {
+  font-size: clamp(52px, 12vw, 74px);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  margin: 14px 0 0;
+}
+.modal-wordmark .decay {
+  color: var(--signal);
+}
+.modal-lede {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-top: 18px;
+  max-width: 46ch;
+}
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.modal-enter {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--signal);
+  color: var(--ink);
+  border: 1px solid var(--signal);
+  padding: 12px 22px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.modal-pump {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 12px 22px;
+  border-radius: 3px;
+  border: 1px solid var(--line-bright);
+  color: var(--bone);
+  display: inline-flex;
+  align-items: center;
+}
+.modal-pump:hover {
+  border-color: var(--bone);
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes popin {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
 /* ---- ambient motion ---- */
 body::before {
   content: "";

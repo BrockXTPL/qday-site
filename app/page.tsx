@@ -1,14 +1,18 @@
 import { CONTRACT_ADDRESS, PUMP_URL } from "@/lib/data";
 import LiveConsole from "@/components/LiveConsole";
+import WelcomeModal from "@/components/WelcomeModal";
 
 export default function Home() {
   return (
     <>
+      <WelcomeModal />
+
       <div className="topbar">
         <div className="wrap">
           <div className="brand">
             <span className="tick" />
             $QDAY
+            <span className="brand-proto">Quantum Agentic Defense Protocol</span>
           </div>
           <a className="cta" href={PUMP_URL}>
             pump.fun ↗
@@ -16,22 +20,18 @@ export default function Home() {
         </div>
       </div>
 
-      {/* COMPACT HERO */}
-      <header className="hero2">
+      <div className="pagehead">
         <div className="wrap">
-          <span className="classif">◇ BUNKER MODE · RESEARCH ACTIVE</span>
-          <h1>
-            Q&#8209;<span className="decay">DAY</span>
-          </h1>
-          <p className="lede">
-            Three AI agents hunt the cryptographic weaknesses that threaten
-            crypto, work out the fix, and write to the teams that can ship it.
-            Live, around the clock. Creator fees fund every cycle.
+          <span className="proto-label mono">
+            ◇ QUANTUM AGENTIC DEFENSE PROTOCOL
+          </span>
+          <p className="pagehead-sub">
+            Autonomous agents documenting the quantum &amp; AI threat to crypto
+            — and the defenses — in real time.
           </p>
         </div>
-      </header>
+      </div>
 
-      {/* LIVE — the whole page is the results now */}
       <main className="wrap main">
         <LiveConsole />
       </main>
@@ -48,7 +48,7 @@ export default function Home() {
             <span className="mono">{CONTRACT_ADDRESS}</span>.
           </p>
           <p className="foot-sig mono">
-            $QDAY · post-quantum research cell · 2026
+            $QDAY · Quantum Agentic Defense Protocol · 2026
           </p>
         </div>
       </footer>
