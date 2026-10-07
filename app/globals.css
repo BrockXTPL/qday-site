@@ -635,6 +635,123 @@ footer {
   margin-top: 2px;
 }
 
+/* ---- wide shell + side rails ---- */
+.wrap-wide {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.topbar .wrap-wide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 58px;
+}
+.shell {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: 30px 24px 10px;
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr) 236px;
+  gap: 24px;
+  align-items: start;
+  position: relative;
+  z-index: 2;
+}
+.col-main {
+  min-width: 0;
+}
+.rail {
+  position: sticky;
+  top: 74px;
+  font-size: 13px;
+}
+.rail-head {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--bone);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line-bright);
+}
+.rail-note {
+  font-size: 12px;
+  color: var(--faint);
+  margin: 8px 0 14px;
+}
+.rail-item {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.rail-item-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  justify-content: space-between;
+}
+.rail-item.agenda .rail-item-top {
+  justify-content: flex-start;
+}
+.rail-item-t {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--bone);
+  line-height: 1.3;
+}
+.rail-idx {
+  font-size: 11px;
+  color: var(--accent-lattice);
+  flex-shrink: 0;
+}
+.rail-item p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 5px;
+}
+.rtag {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.rtag.active {
+  color: var(--signal);
+  background: var(--signal-dim);
+}
+.rtag.present {
+  color: #ffa94d;
+  background: rgba(255, 169, 77, 0.12);
+}
+.rtag.emerging {
+  color: var(--accent-oracle);
+  background: rgba(157, 140, 255, 0.12);
+}
+.rtag.watching {
+  color: var(--muted);
+  background: var(--panel-2);
+}
+.rail-foot {
+  margin-top: 14px;
+  font-size: 11px;
+  color: var(--faint);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+@media (max-width: 1140px) {
+  .shell {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .rail {
+    display: none;
+  }
+}
+
 /* ---- brand proto + page head ---- */
 .brand-proto {
   font-family: var(--font-mono);
