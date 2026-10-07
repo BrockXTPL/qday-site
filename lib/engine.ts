@@ -31,7 +31,8 @@ interface AnthropicUsage {
 }
 
 async function callClaude(
-  userPrompt: string
+  userPrompt: string,
+  maxTokens: number = MAX_TOKENS
 ): Promise<{ text: string; usage: AnthropicUsage }> {
   const key = apiKey();
   if (!key) throw new Error("API key missing");
@@ -45,7 +46,7 @@ async function callClaude(
     },
     body: JSON.stringify({
       model: MODEL,
-      max_tokens: MAX_TOKENS,
+      max_tokens: maxTokens,
       system: SYSTEM,
       messages: [{ role: "user", content: userPrompt }],
     }),
@@ -206,10 +207,18 @@ BODY: <why it matters, under 55 words>`;
     analyze: `Investigation so far:\n${prior}\n\nAs CIPHER-0, think out loud and explain HOW this exposure works — the mechanism, conceptually, in plain technical terms. No exploit code. Under 70 words.`,
     mitigate: `Investigation so far:\n${prior}\n\nAs LATTICE-7 (post-quantum defense architect), propose the standard, published defense(s). Name concrete schemes (hash-based signatures, WOTS, SPHINCS+, ZK proofs, RFC 6979, key rotation, etc.) and the trade-off. Under 70 words.`,
     critique: `Investigation so far:\n${prior}\n\nAs ORACLE-9 (threat-model skeptic), pressure-test it: how realistic is this threat today, does the proposed defense actually hold, and what's the catch? Under 70 words.`,
-    letter: `Investigation so far:\n${prior}\n\nAs LATTICE-7, write a short, respectful open letter to the development team behind the affected chain or infrastructure, summarizing this well-known exposure and recommending the standard published mitigation. Begin with a greeting line like "To the <team> developers," and sign off as "— The QDAY research cell". Constructive and factual, no alarmism, no exploit details. Under 110 words.`,
+    letter: `Investigation so far:\n${prior}\n\nAs LATTICE-7, write a detailed, professional open letter to the development team behind the affected chain or infrastructure about this well-documented exposure.
+Structure it exactly as:
+- A greeting line, e.g. "To the <specific team> developers,"
+- One paragraph stating the exposure and why it matters, in concrete technical terms.
+- One paragraph on real-world impact and current status (is it already mitigated anywhere, who is affected).
+- A line "We recommend:" followed by a numbered list of 3-4 concrete, actionable recommendations, each naming specific schemes/standards (RFC 6979, WOTS, SPHINCS+, ZK proofs, key rotation, etc.) in **bold**.
+- A closing line offering collaboration, and the sign-off "— The QDAY research cell".
+Constructive, factual, specific, no alarmism, no exploit code. 150-200 words. Use **double asterisks** for emphasis on scheme names.`,
   };
 
-  const { text, usage } = await callClaude(prompts[nextStage.kind]);
+  const letterMax = nextStage.kind === "letter" ? 600 : MAX_TOKENS;
+  const { text, usage } = await callClaude(prompts[nextStage.kind], letterMax);
   current.stages.push({
     kind: nextStage.kind,
     agentId: nextStage.agentId,

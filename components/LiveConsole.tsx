@@ -50,6 +50,90 @@ function barColor(pct: number) {
   if (pct >= 20) return "#ffd43b";
   return "var(--accent-lattice)";
 }
+function clock(iso: string): string {
+  return new Date(iso).toISOString().slice(11, 19);
+}
+
+// inline **bold** rendering
+function inlineBold(line: string, k: string) {
+  const parts = line.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((p, i) =>
+    p.startsWith("**") && p.endsWith("**") ? (
+      <strong key={`${k}-${i}`}>{p.slice(2, -2)}</strong>
+    ) : (
+      <span key={`${k}-${i}`}>{p}</span>
+    )
+  );
+}
+function RichText({ text }: { text: string }) {
+  const lines = text.split("\n");
+  return (
+    <div className="rich">
+      {lines.map((ln, i) =>
+        ln.trim() === "" ? (
+          <div key={i} className="rich-gap" />
+        ) : (
+          <p key={i} className="rich-line">
+            {inlineBold(ln, String(i))}
+          </p>
+        )
+      )}
+    </div>
+  );
+}
+
+// typewriter reveal for freshly-landed text
+function Typewriter({ text }: { text: string }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    setN(0);
+    const step = Math.max(1, Math.round(text.length / 90)); // ~finish in ~1.8s
+    const id = setInterval(() => {
+      setN((prev) => {
+        if (prev >= text.length) {
+          clearInterval(id);
+          return prev;
+        }
+        return Math.min(text.length, prev + step);
+      });
+    }, 20);
+    return () => clearInterval(id);
+  }, [text]);
+  const done = n >= text.length;
+  return (
+    <span>
+      {text.slice(0, n)}
+      {!done && <span className="tw-caret" />}
+    </span>
+  );
+}
+
+interface Evt {
+  at: string;
+  agentId: string;
+  kind: StageKind;
+  title: string;
+}
+const EVT_VERB: Record<StageKind, string> = {
+  identify: "flagged a vulnerability in",
+  analyze: "broke down the mechanism of",
+  mitigate: "drafted a fix for",
+  critique: "pressure-tested",
+  letter: "wrote to the dev team re",
+};
+function collectEvents(state: LiveState): Evt[] {
+  const all = [state.current, ...state.archive].filter(
+    Boolean
+  ) as Investigation[];
+  const evts: Evt[] = [];
+  for (const inv of all) {
+    for (const s of inv.stages) {
+      evts.push({ at: s.at, agentId: s.agentId, kind: s.kind, title: inv.title });
+    }
+  }
+  evts.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+  return evts.slice(0, 16);
+}
 
 export default function LiveConsole() {
   const [state, setState] = useState<LiveState | null>(null);
@@ -147,9 +231,72 @@ export default function LiveConsole() {
 }
 
 /* ---------- LIVE ---------- */
+function StatsStrip({ state }: { state: LiveState }) {
+  const s = state.stats;
+  const tiles = [
+    { n: String(s.investigations), l: "investigations closed", c: "var(--bone)" },
+    { n: String(s.letters), l: "letters sent", c: "var(--accent-lattice)" },
+    {
+      n: "$" + s.spentTodayUsd.toFixed(3),
+      l: "researched today",
+      c: "var(--accent-cipher)",
+    },
+    {
+      n: timeAgo(s.lastActivity),
+      l: "last activity",
+      c: s.lastActivity ? "var(--signal)" : "var(--faint)",
+    },
+  ];
+  return (
+    <div className="statstrip">
+      {tiles.map((t, i) => (
+        <div className="stile" key={i}>
+          <div className="n mono" style={{ color: t.c }}>
+            {t.n}
+          </div>
+          <div className="l mono">{t.l}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SignalLog({ state }: { state: LiveState }) {
+  const evts = collectEvents(state);
+  return (
+    <div className="siglog">
+      <div className="siglog-head mono">
+        <span className="livedot" /> SIGNAL LOG
+      </div>
+      <div className="siglog-body mono">
+        <div className="siglog-cursor">
+          <span className="caret" /> monitoring research cell…
+        </div>
+        {evts.map((e, i) => {
+          const agent = agentById(e.agentId)!;
+          return (
+            <div className="siglog-line" key={i}>
+              <span className="t">{clock(e.at)}</span>
+              <span className="who" style={{ color: ac(e.agentId) }}>
+                {agent.handle}
+              </span>
+              <span className="v">{EVT_VERB[e.kind]}</span>
+              <span className="ti">
+                &ldquo;{e.title.length > 46 ? e.title.slice(0, 46) + "…" : e.title}
+                &rdquo;
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function LiveTab({ state }: { state: LiveState }) {
   return (
     <>
+      <StatsStrip state={state} />
       <div className="lc-agents">
         {AGENTS.map((a) => {
           const st = state.agents.find((x) => x.agentId === a.id);
@@ -187,6 +334,7 @@ function LiveTab({ state }: { state: LiveState }) {
       ) : (
         <div className="lc-empty mono">spinning up the next investigation…</div>
       )}
+      <SignalLog state={state} />
     </>
   );
 }
@@ -202,6 +350,9 @@ function ActiveInvestigation({
   const nextStage = STAGE_ORDER[inv.stages.length];
   const pendingAgent = nextStage
     ? agents.find((a) => a.agentId === nextStage.agentId)
+    : null;
+  const newestKind = inv.stages.length
+    ? inv.stages[inv.stages.length - 1].kind
     : null;
 
   return (
@@ -248,7 +399,13 @@ function ActiveInvestigation({
                 </div>
                 {isDone ? (
                   isLetter ? (
-                    <pre className="lc-letter">{stage!.text}</pre>
+                    <div className="lc-letter rich-wrap">
+                      <RichText text={stage!.text} />
+                    </div>
+                  ) : so.kind === newestKind ? (
+                    <p key={`${inv.id}-${so.kind}`}>
+                      <Typewriter text={stage!.text} />
+                    </p>
                   ) : (
                     <p>{stage!.text}</p>
                   )
@@ -321,7 +478,9 @@ function ArchiveRow({ inv }: { inv: Investigation }) {
                   <span>{STAGE_LABEL[s.kind]}</span>
                 </div>
                 {s.kind === "letter" ? (
-                  <pre className="lc-letter">{s.text}</pre>
+                  <div className="lc-letter rich-wrap">
+                    <RichText text={s.text} />
+                  </div>
                 ) : (
                   <p>{s.text}</p>
                 )}
@@ -374,13 +533,23 @@ function LettersTab({ letters }: { letters: LetterItem[] }) {
         After each investigation, the cell drafts an open letter to the team
         that could ship the fix. Commentary, not official disclosure.
       </p>
-      {letters.map((l) => (
+      {letters.map((l, i) => (
         <div key={l.id} className="letter-card">
+          <div className="letter-head">
+            <span className="letter-tag mono">
+              OPEN LETTER №{String(letters.length - i).padStart(3, "0")}
+            </span>
+            <span className="letter-date mono">
+              {new Date(l.at).toISOString().slice(0, 10)}
+            </span>
+          </div>
           <div className="letter-meta mono">
             <span className="re">RE: {l.title}</span>
             <span className="ch">{l.chain}</span>
           </div>
-          <pre className="lc-letter plain">{l.text}</pre>
+          <div className="letter-body rich-wrap">
+            <RichText text={l.text} />
+          </div>
         </div>
       ))}
     </div>

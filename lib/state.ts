@@ -1,4 +1,9 @@
-import type { Investigation, LiveState, AgentStatus } from "./types";
+import type {
+  Investigation,
+  LiveState,
+  AgentStatus,
+  LiveStats,
+} from "./types";
 import { STAGE_ORDER } from "./types";
 import { AGENTS } from "./data";
 import { KEYS, kvGet, engineConfigured, getSpend } from "./store";
@@ -37,11 +42,26 @@ export async function buildState(): Promise<LiveState> {
     };
   });
 
+  const letterCount = [current, ...archive]
+    .filter(Boolean)
+    .reduce(
+      (n, inv) =>
+        n + (inv!.stages.some((s) => s.kind === "letter") ? 1 : 0),
+      0
+    );
+  const stats: LiveStats = {
+    investigations: archive.length,
+    letters: letterCount,
+    spentTodayUsd: spend.usd,
+    lastActivity: lastTick,
+  };
+
   return {
     live: true,
     current: current ?? null,
     archive,
     agents,
+    stats,
     updatedAt: lastTick || new Date().toISOString(),
     note: capped
       ? "Agents resting — daily research budget reached. Resumes tomorrow (UTC)."

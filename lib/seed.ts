@@ -131,6 +131,14 @@ export function seedState(): LiveState {
     current: SEED_CURRENT,
     archive: SEED_ARCHIVE,
     agents,
+    stats: {
+      investigations: SEED_ARCHIVE.length,
+      letters: SEED_ARCHIVE.filter((i) =>
+        i.stages.some((s) => s.kind === "letter")
+      ).length,
+      spentTodayUsd: 0,
+      lastActivity: "2026-10-07T16:11:20Z",
+    },
     updatedAt: "2026-10-07T16:11:20Z",
     note: "Preview data. The live engine starts once ANTHROPIC_API_KEY and storage are configured.",
   };

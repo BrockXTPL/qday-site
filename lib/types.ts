@@ -33,11 +33,19 @@ export interface AgentStatus {
   lastActive: string | null; // ISO
 }
 
+export interface LiveStats {
+  investigations: number; // closed investigations
+  letters: number; // letters drafted (current + archive)
+  spentTodayUsd: number; // research spend so far today (UTC)
+  lastActivity: string | null; // ISO of last tick
+}
+
 export interface LiveState {
   live: boolean; // false = seeded/demo data, engine not configured
   current: Investigation | null;
   archive: Investigation[];
   agents: AgentStatus[];
+  stats: LiveStats;
   updatedAt: string;
   note?: string;
 }
