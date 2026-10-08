@@ -1,23 +1,33 @@
 :root {
-  --ink: #0a0e14;
-  --ink-2: #0e141d;
-  --panel: #121a26;
-  --panel-2: #16202e;
-  --line: #1e2a3a;
-  --line-bright: #2b3b50;
-  --bone: #e8e3d6;
-  --muted: #8b95a7;
-  --faint: #5a6476;
+  /* Quantum Shield palette — cool indigo + electric cyan + mint */
+  --ink: #0d0f24;
+  --ink-2: #13162f;
+  --panel: #1a1d3d;
+  --panel-2: #222651;
+  --line: #2b2f5c;
+  --line-bright: #3c4178;
+  --bone: #eef0ff;
+  --muted: #a3a8d6;
+  --faint: #6a6fa0;
 
-  --signal: #ff5a36; /* threat / warning */
-  --signal-dim: rgba(255, 90, 54, 0.14);
+  --signal: #38e1ff; /* shield / live / brand accent (electric cyan) */
+  --signal-dim: rgba(56, 225, 255, 0.14);
 
-  --accent-cipher: #f6a609; /* amber */
-  --accent-lattice: #35d0ba; /* teal */
-  --accent-oracle: #9d8cff; /* periwinkle */
+  --coral: #ff6b8a; /* threat / critical */
+  --amber: #ffb454; /* caution */
+  --gold: #ffd36b;
 
-  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --accent-cipher: #38e1ff; /* cyan — analyst */
+  --accent-lattice: #4fe7b0; /* mint — defense */
+  --accent-oracle: #a98bff; /* violet — skeptic */
+
+  --font-display: "Fredoka", system-ui, sans-serif; /* rounded, bubbly */
+  --font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --r-lg: 16px;
+  --r-md: 12px;
+  --r-sm: 8px;
 }
 
 * {
@@ -33,16 +43,17 @@ html {
 body {
   background: var(--ink);
   color: var(--bone);
-  font-family: var(--font-display);
+  font-family: var(--font-ui);
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   background-image: radial-gradient(
-      circle at 15% -10%,
-      rgba(255, 90, 54, 0.06),
-      transparent 45%
+      circle at 12% -8%,
+      rgba(56, 225, 255, 0.1),
+      transparent 42%
     ),
-    radial-gradient(circle at 90% 0%, rgba(53, 208, 186, 0.05), transparent 40%);
+    radial-gradient(circle at 92% 2%, rgba(169, 139, 255, 0.09), transparent 40%),
+    radial-gradient(circle at 50% 120%, rgba(79, 231, 176, 0.06), transparent 50%);
   background-attachment: fixed;
 }
 
@@ -1561,4 +1572,185 @@ body::after {
     animation: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ============================================================
+   REVAMP — Quantum Shield skin (overrides win by cascade order)
+   ============================================================ */
+
+/* bubbly display font on headings + brand + big numbers */
+.brand,
+.modal-wordmark,
+.modal-proto,
+.hero2 h1,
+.sec-title,
+.lc-title,
+.lc-active h3,
+.stile .n,
+.letter-tag,
+.rail-head,
+.tab {
+  font-family: var(--font-display);
+}
+.brand {
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0;
+}
+.lc-title,
+.sec-title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.tab {
+  font-weight: 500;
+  letter-spacing: 0;
+  font-size: 14px;
+}
+.stile .n {
+  font-weight: 600;
+}
+
+/* softer, rounder, friendlier surfaces */
+.stile,
+.lc-agent,
+.lc-active,
+.letter-card,
+.lc-arow,
+.statstrip,
+.siglog,
+.modal-card,
+.lc-letter,
+.cta,
+.btn-primary,
+.btn-ghost,
+.modal-enter,
+.modal-pump {
+  border-radius: var(--r-md) !important;
+}
+.lc-active,
+.modal-card,
+.letter-card {
+  border-radius: var(--r-lg) !important;
+}
+.statstrip {
+  overflow: hidden;
+}
+
+/* gentle depth + glow */
+.lc-agent,
+.stile,
+.letter-card,
+.lc-arow {
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
+}
+.lc-active {
+  box-shadow: 0 8px 34px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(56, 225, 255, 0.06);
+}
+.lc-agent.on {
+  box-shadow: 0 0 0 1px var(--ac), 0 6px 22px rgba(0, 0, 0, 0.3),
+    0 0 26px -6px var(--ac);
+}
+
+/* pill-shaped tags + rounded chips */
+.rtag,
+.sev,
+.tab-count,
+.kind,
+.classif,
+.proto-label,
+.modal-proto {
+  border-radius: 999px !important;
+}
+.sev {
+  padding: 2px 10px !important;
+}
+
+/* recolor severity for the new palette */
+.sev.critical {
+  color: var(--coral);
+  background: rgba(255, 107, 138, 0.15);
+}
+.sev.high {
+  color: var(--amber);
+  background: rgba(255, 180, 84, 0.15);
+}
+.sev.moderate {
+  color: var(--gold);
+  background: rgba(255, 211, 107, 0.13);
+}
+.sev.informational {
+  color: var(--mint, var(--accent-lattice));
+  background: rgba(79, 231, 176, 0.15);
+}
+
+/* recolor threat tags */
+.rtag.active {
+  color: var(--coral);
+  background: rgba(255, 107, 138, 0.15);
+}
+.rtag.present {
+  color: var(--amber);
+  background: rgba(255, 180, 84, 0.15);
+}
+.rtag.emerging {
+  color: var(--accent-oracle);
+  background: rgba(169, 139, 255, 0.15);
+}
+.rtag.watching {
+  color: var(--muted);
+  background: var(--panel-2);
+}
+
+/* brand tick glows cyan */
+.brand .tick,
+.tab .livedot,
+.siglog-head .livedot {
+  box-shadow: 0 0 10px var(--signal);
+}
+
+/* topbar: brand-only, left aligned (pump link removed) */
+.topbar .wrap-wide {
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+/* wordmark accent reads as a glowing shield color */
+.modal-wordmark .decay,
+.hero2 h1 .decay {
+  color: var(--signal);
+  text-shadow: 0 0 24px rgba(56, 225, 255, 0.35);
+}
+
+/* active-investigation + section tags use cyan not red */
+.lc-active-head .tag {
+  color: var(--signal);
+}
+
+/* stat numbers: friendly, slightly larger */
+.stile .n {
+  font-size: 28px;
+}
+
+/* tab active underline a touch thicker + rounded */
+.tab.active {
+  border-bottom-width: 3px;
+  border-radius: 0;
+}
+
+/* buttons: friendlier */
+.modal-enter {
+  box-shadow: 0 6px 20px -6px var(--signal);
+}
+
+/* smooth hover lift on interactive cards */
+.lc-arow-head,
+.tab,
+.modal-enter,
+.modal-pump {
+  transition: all 0.18s ease;
+}
+.lc-arow:hover {
+  border-color: var(--line-bright);
 }

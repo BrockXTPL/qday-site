@@ -45,9 +45,9 @@ function ac(agentId: string) {
   return `var(${agentById(agentId)?.accent || "--muted"})`;
 }
 function barColor(pct: number) {
-  if (pct >= 70) return "var(--signal)";
-  if (pct >= 40) return "#ffa94d";
-  if (pct >= 20) return "#ffd43b";
+  if (pct >= 70) return "var(--coral)";
+  if (pct >= 40) return "var(--amber)";
+  if (pct >= 20) return "var(--gold)";
   return "var(--accent-lattice)";
 }
 function clock(iso: string): string {

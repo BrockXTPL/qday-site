@@ -1,6 +1,8 @@
-import { CONTRACT_ADDRESS, PUMP_URL } from "@/lib/data";
+import { CONTRACT_ADDRESS } from "@/lib/data";
 import LiveConsole from "@/components/LiveConsole";
 import WelcomeModal from "@/components/WelcomeModal";
+
+// (exposure bar colors live in LiveConsole/Docs)
 
 const THREATS = [
   {
@@ -62,12 +64,9 @@ export default function Home() {
         <div className="wrap-wide">
           <div className="brand">
             <span className="tick" />
-            $QSHIELD
+            QSHIELD
             <span className="brand-proto">Quantum Shield Protocol</span>
           </div>
-          <a className="cta" href={PUMP_URL}>
-            pump.fun ↗
-          </a>
         </div>
       </div>
 
