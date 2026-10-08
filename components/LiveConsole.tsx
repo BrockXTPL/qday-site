@@ -42,40 +42,55 @@ function CodeDiff({ text }: { text: string }) {
     return <pre className="lc-letter">{text}</pre>;
   }
   const summary = c.eli5 || c.note;
+  const canExplain = !!summary;
   return (
     <div className="codeblock">
-      <div className="code-lang mono">{c.lang}</div>
-      {c.vulnerable && (
-        <div className="code-col bad">
-          <div className="code-h mono">− vulnerable</div>
-          <pre>{c.vulnerable}</pre>
-        </div>
-      )}
-      {c.recommended && (
-        <div className="code-col good">
-          <div className="code-h mono">+ recommended</div>
-          <pre>{c.recommended}</pre>
-        </div>
-      )}
-      {c.note && <div className="code-note">{c.note}</div>}
-      {summary && (
-        <>
-          <button
-            className="code-explain"
-            onClick={() => setOpen((o) => !o)}
-            aria-expanded={open}
-          >
-            <span className="ce-dot" />
-            <span>{open ? "Hide explanation" : "Explain like I'm new"}</span>
-            <span className="ce-chev">{open ? "▾" : "▸"}</span>
-          </button>
-          {open && (
-            <div className="code-eli5">
-              <span className="eli5-tag mono">IN PLAIN ENGLISH</span>
-              <p>{summary}</p>
-            </div>
+      <div
+        className={`code-clickable${canExplain ? " can" : ""}${
+          open ? " open" : ""
+        }`}
+        onClick={canExplain ? () => setOpen((o) => !o) : undefined}
+        role={canExplain ? "button" : undefined}
+        tabIndex={canExplain ? 0 : undefined}
+        aria-expanded={canExplain ? open : undefined}
+        onKeyDown={
+          canExplain
+            ? (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setOpen((o) => !o);
+                }
+              }
+            : undefined
+        }
+      >
+        <div className="code-lang mono">
+          <span>{c.lang}</span>
+          {canExplain && (
+            <span className="code-hint">
+              {open ? "hide explanation ▾" : "tap to explain ▸"}
+            </span>
           )}
-        </>
+        </div>
+        {c.vulnerable && (
+          <div className="code-col bad">
+            <div className="code-h mono">− vulnerable</div>
+            <pre>{c.vulnerable}</pre>
+          </div>
+        )}
+        {c.recommended && (
+          <div className="code-col good">
+            <div className="code-h mono">+ recommended</div>
+            <pre>{c.recommended}</pre>
+          </div>
+        )}
+      </div>
+      {c.note && <div className="code-note">{c.note}</div>}
+      {canExplain && open && (
+        <div className="code-eli5">
+          <span className="eli5-tag mono">IN PLAIN ENGLISH</span>
+          <p>{summary}</p>
+        </div>
       )}
     </div>
   );
