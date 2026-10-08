@@ -32,10 +32,16 @@ const K = {
   archive: "qday:archive",
   lastTick: "qday:lastTick",
   spend: "qday:spend",
+  spendTotal: "qday:spendTotal",
   topicIndex: "qday:topicIndex",
   lock: "qday:lock",
 };
 export const KEYS = K;
+
+// Credits spent before the live tracker existed (shown as the baseline).
+export const RESEARCH_BASELINE_USD = Number(
+  process.env.RESEARCH_BASELINE_USD || "50"
+);
 
 // ioredis stores strings; we JSON-encode ourselves.
 export async function kvGet<T>(key: string): Promise<T | null> {
@@ -84,5 +90,18 @@ export async function addSpend(usd: number): Promise<SpendRecord> {
   const cur = await getSpend();
   const next = { day: cur.day, usd: cur.usd + usd };
   await kvSet(K.spend, next);
+
+  // Lifetime total (never resets). Seed from today's prior spend the first time.
+  const prevTotal = await kvGet<number>(K.spendTotal);
+  const base = prevTotal == null ? cur.usd : prevTotal;
+  await kvSet(K.spendTotal, base + usd);
+
   return next;
+}
+
+// Lifetime research spend since tracking began (excludes the fixed baseline).
+export async function getTotalSpend(): Promise<number> {
+  const t = await kvGet<number>(K.spendTotal);
+  if (t != null) return t;
+  return (await getSpend()).usd; // fallback before the first lifetime write
 }

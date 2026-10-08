@@ -283,8 +283,8 @@ function StatsStrip({ state }: { state: LiveState }) {
     { n: String(s.investigations), l: "investigations closed", c: "var(--bone)" },
     { n: String(s.letters), l: "letters sent", c: "var(--accent-lattice)" },
     {
-      n: "$" + s.spentTodayUsd.toFixed(3),
-      l: "researched today",
+      n: "$" + s.spentTotalUsd.toFixed(2),
+      l: "total researched",
       c: "var(--accent-cipher)",
     },
     {

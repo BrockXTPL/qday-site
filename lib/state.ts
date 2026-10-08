@@ -6,7 +6,14 @@ import type {
 } from "./types";
 import { STAGE_ORDER } from "./types";
 import { AGENTS } from "./data";
-import { KEYS, kvGet, engineConfigured, getSpend } from "./store";
+import {
+  KEYS,
+  kvGet,
+  engineConfigured,
+  getSpend,
+  getTotalSpend,
+  RESEARCH_BASELINE_USD,
+} from "./store";
 import { seedState } from "./seed";
 import { DAILY_USD_CAP } from "./engine";
 
@@ -49,10 +56,12 @@ export async function buildState(): Promise<LiveState> {
         n + (inv!.stages.some((s) => s.kind === "letter") ? 1 : 0),
       0
     );
+  const totalSpent = await getTotalSpend();
   const stats: LiveStats = {
     investigations: archive.length,
     letters: letterCount,
     spentTodayUsd: spend.usd,
+    spentTotalUsd: RESEARCH_BASELINE_USD + totalSpent,
     lastActivity: lastTick,
   };
 

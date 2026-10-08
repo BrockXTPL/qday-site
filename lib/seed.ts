@@ -149,6 +149,7 @@ export function seedState(): LiveState {
         i.stages.some((s) => s.kind === "letter")
       ).length,
       spentTodayUsd: 0,
+      spentTotalUsd: 50,
       lastActivity: "2026-10-07T16:11:20Z",
     },
     updatedAt: "2026-10-07T16:11:20Z",

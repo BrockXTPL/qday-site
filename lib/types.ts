@@ -38,6 +38,7 @@ export interface LiveStats {
   investigations: number; // closed investigations
   letters: number; // letters drafted (current + archive)
   spentTodayUsd: number; // research spend so far today (UTC)
+  spentTotalUsd: number; // baseline + lifetime research spend
   lastActivity: string | null; // ISO of last tick
 }
 
