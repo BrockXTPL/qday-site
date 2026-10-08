@@ -37,7 +37,7 @@ const SEED_ARCHIVE: Investigation[] = [
       {
         kind: "code",
         agentId: "lattice",
-        text: "LANG: rust\nVULNERABLE:\n// long-term funds held directly on an Ed25519 account\nlet sig = ed25519_sign(msg, secret_key);\nsubmit(tx, sig);\nRECOMMENDED:\n// park cold funds behind a hash-based one-time key\nlet wots = winternitz_keypair();\nvault_deposit(amount, wots.public);\n// each spend rotates to a fresh key\nNOTE: Winternitz signing relies only on a hash function, not an elliptic curve, so a curve break cannot recover the key.",
+        text: "LANG: rust\nVULNERABLE:\n// long-term funds held directly on an Ed25519 account\nlet sig = ed25519_sign(msg, secret_key);\nsubmit(tx, sig);\nRECOMMENDED:\n// park cold funds behind a hash-based one-time key\nlet wots = winternitz_keypair();\nvault_deposit(amount, wots.public);\n// each spend rotates to a fresh key\nNOTE: Winternitz signing relies only on a hash function, not an elliptic curve, so a curve break cannot recover the key.\nELI5: Your Solana wallet is locked with math that a future super-computer might crack. This moves your long-term coins into a vault secured by a tougher kind of lock that those computers can't break, and swaps to a brand-new lock after every withdrawal — so your savings stay protected.",
         at: "2026-10-07T15:53:00Z",
       },
       {
@@ -86,7 +86,7 @@ const SEED_ARCHIVE: Investigation[] = [
       {
         kind: "code",
         agentId: "lattice",
-        text: "LANG: python\nVULNERABLE:\nk = random.randint(1, n - 1)        # depends on the RNG\nr, s = ecdsa_sign(msg, privkey, k)\nRECOMMENDED:\nk = rfc6979_nonce(msg, privkey)      # deterministic\nr, s = ecdsa_sign(msg, privkey, k)\nNOTE: RFC 6979 derives k from the message and key, so a weak or repeated RNG value can no longer leak the private key.",
+        text: "LANG: python\nVULNERABLE:\nk = random.randint(1, n - 1)        # depends on the RNG\nr, s = ecdsa_sign(msg, privkey, k)\nRECOMMENDED:\nk = rfc6979_nonce(msg, privkey)      # deterministic\nr, s = ecdsa_sign(msg, privkey, k)\nNOTE: RFC 6979 derives k from the message and key, so a weak or repeated RNG value can no longer leak the private key.\nELI5: Each signature uses a one-time secret number. If a wallet's random generator is weak and reuses that number, attackers can do simple math across two signatures and recover your private key. This fix ties that number to the message itself so it never repeats — removing one of the most common ways real wallets get drained.",
         at: "2026-10-07T14:33:00Z",
       },
       {

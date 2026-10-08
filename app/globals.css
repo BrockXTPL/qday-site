@@ -1840,3 +1840,65 @@ body::after {
   margin-bottom: 10px;
   color: var(--bone);
 }
+
+/* ---- "explain like I'm new" toggle ---- */
+.code-explain {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--panel-2);
+  border: 1px solid var(--line-bright);
+  color: var(--signal);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.code-explain:hover {
+  background: var(--signal-dim);
+  border-color: var(--signal);
+}
+.code-explain .ce-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 8px var(--signal);
+}
+.code-explain .ce-chev {
+  color: var(--muted);
+  font-size: 11px;
+}
+.code-eli5 {
+  margin-top: 10px;
+  background: linear-gradient(
+    180deg,
+    rgba(56, 225, 255, 0.07),
+    rgba(56, 225, 255, 0.02)
+  );
+  border: 1px solid rgba(56, 225, 255, 0.22);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  animation: eli5in 0.2s ease;
+}
+.eli5-tag {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--signal);
+}
+.code-eli5 p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--bone);
+  margin-top: 7px;
+}
+@keyframes eli5in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

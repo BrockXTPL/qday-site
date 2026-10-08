@@ -212,7 +212,8 @@ VULNERABLE:
 <2-6 short lines of the insecure pattern>
 RECOMMENDED:
 <2-6 short lines of the hardened replacement>
-NOTE: <one sentence on why the replacement is safe>`,
+NOTE: <one sentence on why the replacement is safe>
+ELI5: <2-3 plain-English sentences a non-technical crypto user understands: what this code does, and how the fix makes their coins or the chain safer. No jargon.>`,
     critique: `Investigation so far:\n${prior}\n\nAs ORACLE-9 (threat-model skeptic), pressure-test it: how realistic is this threat today, does the proposed defense actually hold, and what's the catch? Under 70 words.`,
     letter: `Investigation so far:\n${prior}\n\nAs LATTICE-7, write a detailed, professional open letter to the development team behind the affected chain or infrastructure about this well-documented exposure.
 Structure it exactly as:

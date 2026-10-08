@@ -14,7 +14,7 @@ const STAGE_LABEL: Record<StageKind, string> = {
   letter: "Letter to the dev team",
 };
 
-// Parse a LANG/VULNERABLE/RECOMMENDED/NOTE code-stage payload.
+// Parse a LANG/VULNERABLE/RECOMMENDED/NOTE/ELI5 code-stage payload.
 function parseCode(text: string) {
   const grab = (label: string) => {
     const m = text.match(new RegExp(`${label}:\\s*(.+)`, "i"));
@@ -25,19 +25,23 @@ function parseCode(text: string) {
     const m = text.match(re);
     return m ? m[1].replace(/^\n+|\n+$/g, "") : "";
   };
+  const eliM = text.match(/ELI5:\s*([\s\S]+)$/i);
   return {
     lang: grab("LANG") || "code",
     vulnerable: between("VULNERABLE", "RECOMMENDED"),
     recommended: between("RECOMMENDED", "NOTE"),
-    note: grab("NOTE"),
+    note: between("NOTE", "ELI5").split("\n")[0].trim() || grab("NOTE"),
+    eli5: eliM ? eliM[1].trim() : "",
   };
 }
 
 function CodeDiff({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
   const c = parseCode(text);
   if (!c.vulnerable && !c.recommended) {
     return <pre className="lc-letter">{text}</pre>;
   }
+  const summary = c.eli5 || c.note;
   return (
     <div className="codeblock">
       <div className="code-lang mono">{c.lang}</div>
@@ -54,6 +58,25 @@ function CodeDiff({ text }: { text: string }) {
         </div>
       )}
       {c.note && <div className="code-note">{c.note}</div>}
+      {summary && (
+        <>
+          <button
+            className="code-explain"
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+          >
+            <span className="ce-dot" />
+            <span>{open ? "Hide explanation" : "Explain like I'm new"}</span>
+            <span className="ce-chev">{open ? "▾" : "▸"}</span>
+          </button>
+          {open && (
+            <div className="code-eli5">
+              <span className="eli5-tag mono">IN PLAIN ENGLISH</span>
+              <p>{summary}</p>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -611,15 +634,15 @@ function LettersTab({ letters }: { letters: LetterItem[] }) {
 const SECURE_DEFAULTS = [
   {
     title: "Deterministic ECDSA nonces",
-    text: "LANG: python\nVULNERABLE:\nk = random.randint(1, n - 1)\nr, s = ecdsa_sign(msg, privkey, k)\nRECOMMENDED:\nk = rfc6979_nonce(msg, privkey)\nr, s = ecdsa_sign(msg, privkey, k)\nNOTE: RFC 6979 removes RNG dependence, closing the most common real-world key-leak path.",
+    text: "LANG: python\nVULNERABLE:\nk = random.randint(1, n - 1)\nr, s = ecdsa_sign(msg, privkey, k)\nRECOMMENDED:\nk = rfc6979_nonce(msg, privkey)\nr, s = ecdsa_sign(msg, privkey, k)\nNOTE: RFC 6979 removes RNG dependence, closing the most common real-world key-leak path.\nELI5: Every time your wallet signs, it rolls a secret dice. If the dice is predictable or repeats, thieves can rewind the math and steal your private key. This fix makes the dice depend on the message itself, so it can never repeat or be guessed — your keys stay yours.",
   },
   {
     title: "Hash-based cold storage",
-    text: "LANG: rust\nVULNERABLE:\nlet sig = ed25519_sign(msg, secret_key);\nsubmit(tx, sig);\nRECOMMENDED:\nlet wots = winternitz_keypair();\nvault_deposit(amount, wots.public);\nNOTE: Hash-based one-time keys carry no elliptic-curve structure for a future break to exploit.",
+    text: "LANG: rust\nVULNERABLE:\nlet sig = ed25519_sign(msg, secret_key);\nsubmit(tx, sig);\nRECOMMENDED:\nlet wots = winternitz_keypair();\nvault_deposit(amount, wots.public);\nNOTE: Hash-based one-time keys carry no elliptic-curve structure for a future break to exploit.\nELI5: Today's wallets lock your coins with a math puzzle a future quantum or AI computer might solve. This stores your long-term funds behind a different kind of lock — one built from hashing, which those computers can't shortcut — so your savings stay safe even if the old math breaks.",
   },
   {
     title: "Never reuse an address",
-    text: "LANG: pseudocode\nVULNERABLE:\naddr = wallet.main_address   // reused every receive\nreceive(addr)\nRECOMMENDED:\naddr = wallet.derive_next()  // fresh per receive\nreceive(addr)\nNOTE: One address per receipt limits how long any public key sits exposed on-chain.",
+    text: "LANG: pseudocode\nVULNERABLE:\naddr = wallet.main_address   // reused every receive\nreceive(addr)\nRECOMMENDED:\naddr = wallet.derive_next()  // fresh per receive\nreceive(addr)\nNOTE: One address per receipt limits how long any public key sits exposed on-chain.\nELI5: Reusing one address is like leaving the same house key under the mat forever — the longer it's exposed, the more time an attacker has to copy it. Using a fresh address each time means there's almost nothing sitting out in the open to target.",
   },
 ];
 
