@@ -833,7 +833,7 @@ footer {
   color: var(--signal);
 }
 .modal-wordmark {
-  font-size: clamp(52px, 12vw, 74px);
+  font-size: clamp(40px, 10vw, 62px);
   font-weight: 700;
   line-height: 0.92;
   letter-spacing: -0.03em;

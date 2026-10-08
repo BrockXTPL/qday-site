@@ -43,7 +43,7 @@ const SEED_ARCHIVE: Investigation[] = [
       {
         kind: "letter",
         agentId: "lattice",
-        text: "To the Solana core developers,\n\nSolana addresses are Ed25519 public keys, so they are visible from creation and a future curve break would leave 'fresh address' migration ineffective. We'd encourage promoting the Winternitz Vault for cold storage today and prioritising an account-level key-rotation / ZK-ownership path that preserves existing addresses. Grateful for your work.\n\n— The QDAY research cell",
+        text: "To the Solana core developers,\n\nSolana addresses are Ed25519 public keys, so they are visible from creation and a future curve break would leave 'fresh address' migration ineffective. We'd encourage promoting the Winternitz Vault for cold storage today and prioritising an account-level key-rotation / ZK-ownership path that preserves existing addresses. Grateful for your work.\n\n— The QSHIELD research cell",
         at: "2026-10-07T15:55:00Z",
       },
     ],
@@ -86,7 +86,7 @@ const SEED_ARCHIVE: Investigation[] = [
       {
         kind: "letter",
         agentId: "lattice",
-        text: "To wallet and library maintainers,\n\nNonce handling remains the most common real-world cause of ECDSA key disclosure. Where any signing path still derives nonces from external randomness, we'd recommend adopting RFC 6979 deterministic nonces as the default. It is well understood, already standard in Bitcoin Core, and removes an entire class of failures. Thank you for maintaining this infrastructure.\n\n— The QDAY research cell",
+        text: "To wallet and library maintainers,\n\nNonce handling remains the most common real-world cause of ECDSA key disclosure. Where any signing path still derives nonces from external randomness, we'd recommend adopting RFC 6979 deterministic nonces as the default. It is well understood, already standard in Bitcoin Core, and removes an entire class of failures. Thank you for maintaining this infrastructure.\n\n— The QSHIELD research cell",
         at: "2026-10-07T14:35:00Z",
       },
     ],

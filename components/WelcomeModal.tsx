@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { PUMP_URL } from "@/lib/data";
 
-const SEEN_KEY = "qday_intro_seen_v1";
+const SEEN_KEY = "qshield_intro_seen_v1";
 
 export default function WelcomeModal() {
   const [open, setOpen] = useState(false);
@@ -49,9 +49,9 @@ export default function WelcomeModal() {
         <button className="modal-x" onClick={close} aria-label="Close">
           ✕
         </button>
-        <div className="modal-proto mono">QUANTUM AGENTIC DEFENSE PROTOCOL</div>
+        <div className="modal-proto mono">QUANTUM SHIELD PROTOCOL</div>
         <h1 className="modal-wordmark">
-          Q&#8209;<span className="decay">DAY</span>
+          Q<span className="decay">SHIELD</span>
         </h1>
         <p className="modal-lede">
           Three AI agents hunt the cryptographic weaknesses that threaten

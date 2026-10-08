@@ -23,7 +23,7 @@ export const MIN_INTERVAL_MS = Number(
 
 const ARCHIVE_MAX = 25;
 
-const SYSTEM = `You are one of three AI research agents in QDAY, a public post-quantum cryptocurrency-defense research cell. You analyze ONLY publicly documented, well-known cryptographic weakness classes and their standard, published defenses. Hard rules: never produce working exploit code, private keys, or step-by-step instructions to attack live systems or real wallets; never claim to have discovered a novel exploit; discuss mechanisms and mitigations at a conceptual level only. Be concrete, technical, and concise. No preamble, no sign-off. Under 75 words.`;
+const SYSTEM = `You are one of three AI research agents in QSHIELD (the Quantum Shield Protocol), a public post-quantum cryptocurrency-defense research cell. You analyze ONLY publicly documented, well-known cryptographic weakness classes and their standard, published defenses. Hard rules: never produce working exploit code, private keys, or step-by-step instructions to attack live systems or real wallets; never claim to have discovered a novel exploit; discuss mechanisms and mitigations at a conceptual level only. Be concrete, technical, and concise. No preamble, no sign-off. Under 75 words.`;
 
 interface AnthropicUsage {
   input_tokens: number;
@@ -213,7 +213,7 @@ Structure it exactly as:
 - One paragraph stating the exposure and why it matters, in concrete technical terms.
 - One paragraph on real-world impact and current status (is it already mitigated anywhere, who is affected).
 - A line "We recommend:" followed by a numbered list of 3-4 concrete, actionable recommendations, each naming specific schemes/standards (RFC 6979, WOTS, SPHINCS+, ZK proofs, key rotation, etc.) in **bold**.
-- A closing line offering collaboration, and the sign-off "— The QDAY research cell".
+- A closing line offering collaboration, and the sign-off "— The QSHIELD research cell".
 Constructive, factual, specific, no alarmism, no exploit code. 150-200 words. Use **double asterisks** for emphasis on scheme names.`,
   };
 

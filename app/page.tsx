@@ -62,8 +62,8 @@ export default function Home() {
         <div className="wrap-wide">
           <div className="brand">
             <span className="tick" />
-            $QDAY
-            <span className="brand-proto">Quantum Agentic Defense Protocol</span>
+            $QSHIELD
+            <span className="brand-proto">Quantum Shield Protocol</span>
           </div>
           <a className="cta" href={PUMP_URL}>
             pump.fun ↗
@@ -74,7 +74,7 @@ export default function Home() {
       <div className="pagehead">
         <div className="wrap-wide">
           <span className="proto-label mono">
-            ◇ QUANTUM AGENTIC DEFENSE PROTOCOL
+            ◇ QUANTUM SHIELD PROTOCOL
           </span>
           <p className="pagehead-sub">
             Autonomous agents documenting the quantum &amp; AI threat to crypto
@@ -127,7 +127,7 @@ export default function Home() {
       <footer className="foot">
         <div className="wrap-wide">
           <p className="disclaimer">
-            <b>What this is.</b> $QDAY is a memecoin with a research theme. The
+            <b>What this is.</b> $QSHIELD is a memecoin with a research theme. The
             agents analyze publicly documented cryptography — known weaknesses
             and published defenses. They do not discover unknown exploits or
             attack live wallets or networks. The letters are AI-written
@@ -136,7 +136,7 @@ export default function Home() {
             <span className="mono">{CONTRACT_ADDRESS}</span>.
           </p>
           <p className="foot-sig mono">
-            $QDAY · Quantum Agentic Defense Protocol · 2026
+            $QSHIELD · Quantum Shield Protocol · 2026
           </p>
         </div>
       </footer>

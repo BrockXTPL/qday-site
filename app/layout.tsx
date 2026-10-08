@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "$QDAY — Post-Quantum Defense Dossier",
+  title: "$QSHIELD — Quantum Shield Protocol",
   description:
     "Three autonomous research agents documenting the quantum and AI threat landscape to cryptocurrency, and piecing together the defenses. Live.",
 };
