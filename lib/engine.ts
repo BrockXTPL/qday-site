@@ -206,18 +206,26 @@ BODY: <why it matters, under 55 words>`;
     identify: "",
     analyze: `Investigation so far:\n${prior}\n\nAs CIPHER-0, think out loud and explain HOW this exposure works — the mechanism, conceptually, in plain technical terms. No exploit code. Under 70 words.`,
     mitigate: `Investigation so far:\n${prior}\n\nAs LATTICE-7 (post-quantum defense architect), propose the standard, published defense(s). Name concrete schemes (hash-based signatures, WOTS, SPHINCS+, ZK proofs, RFC 6979, key rotation, etc.) and the trade-off. Under 70 words.`,
+    code: `Investigation so far:\n${prior}\n\nAs LATTICE-7, give a concrete, illustrative code-level recommendation for this exposure: the insecure pattern and the hardened replacement. Pick the language that fits (pseudocode, Python, JavaScript, or Rust). These must be short, conceptual snippets that show secure-coding hygiene — NOT working exploit code, NOT real private keys, NOT a full attack. Respond EXACTLY in this format and nothing else:
+LANG: <python|javascript|rust|pseudocode>
+VULNERABLE:
+<2-6 short lines of the insecure pattern>
+RECOMMENDED:
+<2-6 short lines of the hardened replacement>
+NOTE: <one sentence on why the replacement is safe>`,
     critique: `Investigation so far:\n${prior}\n\nAs ORACLE-9 (threat-model skeptic), pressure-test it: how realistic is this threat today, does the proposed defense actually hold, and what's the catch? Under 70 words.`,
     letter: `Investigation so far:\n${prior}\n\nAs LATTICE-7, write a detailed, professional open letter to the development team behind the affected chain or infrastructure about this well-documented exposure.
 Structure it exactly as:
 - A greeting line, e.g. "To the <specific team> developers,"
 - One paragraph stating the exposure and why it matters, in concrete technical terms.
 - One paragraph on real-world impact and current status (is it already mitigated anywhere, who is affected).
-- A line "We recommend:" followed by a numbered list of 3-4 concrete, actionable recommendations, each naming specific schemes/standards (RFC 6979, WOTS, SPHINCS+, ZK proofs, key rotation, etc.) in **bold**.
+- A line "We recommend:" followed by a numbered list of 3-4 concrete, actionable recommendations, each naming specific schemes/standards (RFC 6979, WOTS, SPHINCS+, ZK proofs, key rotation, etc.) in **bold**. In ONE recommendation, reference the specific code-level change from the investigation and include a short inline fix in backticks (e.g. \`k = rfc6979(msg, privkey)\`).
 - A closing line offering collaboration, and the sign-off "— The QSHIELD research cell".
-Constructive, factual, specific, no alarmism, no exploit code. 150-200 words. Use **double asterisks** for emphasis on scheme names.`,
+Constructive, factual, specific, no alarmism, no working exploit code. 150-200 words. Use **double asterisks** for emphasis on scheme names.`,
   };
 
-  const letterMax = nextStage.kind === "letter" ? 600 : MAX_TOKENS;
+  const letterMax =
+    nextStage.kind === "letter" ? 600 : nextStage.kind === "code" ? 400 : MAX_TOKENS;
   const { text, usage } = await callClaude(prompts[nextStage.kind], letterMax);
   current.stages.push({
     kind: nextStage.kind,

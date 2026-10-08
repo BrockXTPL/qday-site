@@ -1754,3 +1754,89 @@ body::after {
 .lc-arow:hover {
   border-color: var(--line-bright);
 }
+
+/* ---- code-fix block ---- */
+.codeblock {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.code-lang {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.code-col {
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.code-col.bad {
+  border-left: 2px solid var(--coral);
+}
+.code-col.good {
+  border-left: 2px solid var(--accent-lattice);
+}
+.code-h {
+  font-size: 11px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--ink-2);
+}
+.code-col.bad .code-h {
+  color: var(--coral);
+}
+.code-col.good .code-h {
+  color: var(--accent-lattice);
+}
+.codeblock pre {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  padding: 12px;
+  color: var(--bone);
+  background: var(--ink-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+}
+.code-col.bad pre {
+  background: rgba(255, 107, 138, 0.05);
+}
+.code-col.good pre {
+  background: rgba(79, 231, 176, 0.05);
+}
+.code-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  padding-left: 2px;
+}
+.code-note::before {
+  content: "↳ ";
+  color: var(--accent-lattice);
+}
+
+/* secure coding defaults (Advice) */
+.secure-defaults {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.sd-head {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.sd-item {
+  margin-bottom: 22px;
+}
+.sd-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: var(--bone);
+}

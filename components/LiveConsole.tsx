@@ -9,9 +9,54 @@ const STAGE_LABEL: Record<StageKind, string> = {
   identify: "The vulnerability",
   analyze: "How it works",
   mitigate: "The fix",
+  code: "Code fix",
   critique: "Reality check",
   letter: "Letter to the dev team",
 };
+
+// Parse a LANG/VULNERABLE/RECOMMENDED/NOTE code-stage payload.
+function parseCode(text: string) {
+  const grab = (label: string) => {
+    const m = text.match(new RegExp(`${label}:\\s*(.+)`, "i"));
+    return m ? m[1].trim() : "";
+  };
+  const between = (a: string, b: string) => {
+    const re = new RegExp(`${a}:\\s*([\\s\\S]*?)(?:\\n${b}:|$)`, "i");
+    const m = text.match(re);
+    return m ? m[1].replace(/^\n+|\n+$/g, "") : "";
+  };
+  return {
+    lang: grab("LANG") || "code",
+    vulnerable: between("VULNERABLE", "RECOMMENDED"),
+    recommended: between("RECOMMENDED", "NOTE"),
+    note: grab("NOTE"),
+  };
+}
+
+function CodeDiff({ text }: { text: string }) {
+  const c = parseCode(text);
+  if (!c.vulnerable && !c.recommended) {
+    return <pre className="lc-letter">{text}</pre>;
+  }
+  return (
+    <div className="codeblock">
+      <div className="code-lang mono">{c.lang}</div>
+      {c.vulnerable && (
+        <div className="code-col bad">
+          <div className="code-h mono">− vulnerable</div>
+          <pre>{c.vulnerable}</pre>
+        </div>
+      )}
+      {c.recommended && (
+        <div className="code-col good">
+          <div className="code-h mono">+ recommended</div>
+          <pre>{c.recommended}</pre>
+        </div>
+      )}
+      {c.note && <div className="code-note">{c.note}</div>}
+    </div>
+  );
+}
 
 type Tab = "live" | "solved" | "letters" | "advice" | "docs";
 
@@ -118,6 +163,7 @@ const EVT_VERB: Record<StageKind, string> = {
   identify: "flagged a vulnerability in",
   analyze: "broke down the mechanism of",
   mitigate: "drafted a fix for",
+  code: "wrote a code fix for",
   critique: "pressure-tested",
   letter: "wrote to the dev team re",
 };
@@ -380,6 +426,7 @@ function ActiveInvestigation({
           const isNext = nextStage?.kind === so.kind;
           const agent = agentById(so.agentId)!;
           const isLetter = so.kind === "letter";
+          const isCode = so.kind === "code";
           return (
             <div
               key={so.kind}
@@ -402,6 +449,8 @@ function ActiveInvestigation({
                     <div className="lc-letter rich-wrap">
                       <RichText text={stage!.text} />
                     </div>
+                  ) : isCode ? (
+                    <CodeDiff text={stage!.text} />
                   ) : so.kind === newestKind ? (
                     <p key={`${inv.id}-${so.kind}`}>
                       <Typewriter text={stage!.text} />
@@ -481,6 +530,8 @@ function ArchiveRow({ inv }: { inv: Investigation }) {
                   <div className="lc-letter rich-wrap">
                     <RichText text={s.text} />
                   </div>
+                ) : s.kind === "code" ? (
+                  <CodeDiff text={s.text} />
                 ) : (
                   <p>{s.text}</p>
                 )}
@@ -557,6 +608,21 @@ function LettersTab({ letters }: { letters: LetterItem[] }) {
 }
 
 /* ---------- ADVICE ---------- */
+const SECURE_DEFAULTS = [
+  {
+    title: "Deterministic ECDSA nonces",
+    text: "LANG: python\nVULNERABLE:\nk = random.randint(1, n - 1)\nr, s = ecdsa_sign(msg, privkey, k)\nRECOMMENDED:\nk = rfc6979_nonce(msg, privkey)\nr, s = ecdsa_sign(msg, privkey, k)\nNOTE: RFC 6979 removes RNG dependence, closing the most common real-world key-leak path.",
+  },
+  {
+    title: "Hash-based cold storage",
+    text: "LANG: rust\nVULNERABLE:\nlet sig = ed25519_sign(msg, secret_key);\nsubmit(tx, sig);\nRECOMMENDED:\nlet wots = winternitz_keypair();\nvault_deposit(amount, wots.public);\nNOTE: Hash-based one-time keys carry no elliptic-curve structure for a future break to exploit.",
+  },
+  {
+    title: "Never reuse an address",
+    text: "LANG: pseudocode\nVULNERABLE:\naddr = wallet.main_address   // reused every receive\nreceive(addr)\nRECOMMENDED:\naddr = wallet.derive_next()  // fresh per receive\nreceive(addr)\nNOTE: One address per receipt limits how long any public key sits exposed on-chain.",
+  },
+];
+
 function AdviceTab() {
   return (
     <div className="advice">
@@ -573,6 +639,20 @@ function AdviceTab() {
               <h4>{step.h}</h4>
               <p>{step.p}</p>
             </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="secure-defaults">
+        <h4 className="sd-head">Secure coding defaults</h4>
+        <p className="tab-intro">
+          Drop-in patterns builders can adopt today. Illustrative snippets, not
+          exploit code.
+        </p>
+        {SECURE_DEFAULTS.map((d) => (
+          <div className="sd-item" key={d.title}>
+            <div className="sd-title">{d.title}</div>
+            <CodeDiff text={d.text} />
           </div>
         ))}
       </div>

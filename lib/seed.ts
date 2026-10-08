@@ -35,6 +35,12 @@ const SEED_ARCHIVE: Investigation[] = [
         at: "2026-10-07T15:52:30Z",
       },
       {
+        kind: "code",
+        agentId: "lattice",
+        text: "LANG: rust\nVULNERABLE:\n// long-term funds held directly on an Ed25519 account\nlet sig = ed25519_sign(msg, secret_key);\nsubmit(tx, sig);\nRECOMMENDED:\n// park cold funds behind a hash-based one-time key\nlet wots = winternitz_keypair();\nvault_deposit(amount, wots.public);\n// each spend rotates to a fresh key\nNOTE: Winternitz signing relies only on a hash function, not an elliptic curve, so a curve break cannot recover the key.",
+        at: "2026-10-07T15:53:00Z",
+      },
+      {
         kind: "critique",
         agentId: "oracle",
         text: "True, but no public work recovers an Ed25519 key from its public key today. This is a tail-risk hedge, not an emergency. The Vault's real cost is UX and smart-contract risk — weigh that honestly.",
@@ -76,6 +82,12 @@ const SEED_ARCHIVE: Investigation[] = [
         agentId: "lattice",
         text: "RFC 6979 derives the nonce deterministically from the message and key, removing dependence on the RNG. It is already standard in Bitcoin Core and most modern wallets.",
         at: "2026-10-07T14:32:30Z",
+      },
+      {
+        kind: "code",
+        agentId: "lattice",
+        text: "LANG: python\nVULNERABLE:\nk = random.randint(1, n - 1)        # depends on the RNG\nr, s = ecdsa_sign(msg, privkey, k)\nRECOMMENDED:\nk = rfc6979_nonce(msg, privkey)      # deterministic\nr, s = ecdsa_sign(msg, privkey, k)\nNOTE: RFC 6979 derives k from the message and key, so a weak or repeated RNG value can no longer leak the private key.",
+        at: "2026-10-07T14:33:00Z",
       },
       {
         kind: "critique",

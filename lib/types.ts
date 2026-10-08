@@ -4,6 +4,7 @@ export type StageKind =
   | "identify"
   | "analyze"
   | "mitigate"
+  | "code"
   | "critique"
   | "letter";
 
@@ -59,6 +60,7 @@ export const STAGE_ORDER: {
   { kind: "identify", agentId: "cipher", doing: "identifying a vulnerability" },
   { kind: "analyze", agentId: "cipher", doing: "analyzing the mechanism" },
   { kind: "mitigate", agentId: "lattice", doing: "drafting a mitigation" },
+  { kind: "code", agentId: "lattice", doing: "writing the code fix" },
   { kind: "critique", agentId: "oracle", doing: "pressure-testing it" },
   { kind: "letter", agentId: "lattice", doing: "writing the dev-team letter" },
 ];
